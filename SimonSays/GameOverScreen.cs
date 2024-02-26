@@ -14,16 +14,20 @@ namespace SimonSays
         public GameOverScreen()
         {
             InitializeComponent();
+            
         }
 
         private void GameOverScreen_Load(object sender, EventArgs e)
         {
-            //TODO: show the length of the pattern
+            patternLabel.Text = "Your pattern length was:";
+            lengthLabel.Text = $"{GameScreen.round - 1}";
+            Refresh();
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            //TODO: close this screen and open the MenuScreen
+
+            Form1.ChangeScreen(this, new MenuScreen());
         }
     }
 }

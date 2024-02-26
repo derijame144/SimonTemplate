@@ -16,14 +16,47 @@ namespace SimonSays
     {
         //TODO: create a List to store the pattern. Must be accessable on other screens
 
+        public static List<int> pattern = new List<int>();
+        public static SoundPlayer bSound = new SoundPlayer(Properties.Resources.blue);
+        public static SoundPlayer rSound = new SoundPlayer(Properties.Resources.red);
+        public static SoundPlayer ySound = new SoundPlayer(Properties.Resources.yellow);
+        public static SoundPlayer gSound = new SoundPlayer(Properties.Resources.green);
+        public static SoundPlayer lSound = new SoundPlayer(Properties.Resources.mistake);
         public Form1()
         {
             InitializeComponent();
+            ChangeScreen(this, new MenuScreen());
+        }
+
+        public static void ChangeScreen(object sender, UserControl next)
+        {
+
+            Form f;
+
+            if (sender is Form)
+            {
+                f = (Form)sender;
+            }
+
+            else
+            {
+                UserControl current = (UserControl)sender;
+                f = current.FindForm();
+                f.Controls.Remove(current);
+            }
+
+            next.Location = new Point((f.ClientSize.Width - next.Width) / 2,
+            (f.ClientSize.Height - next.Height) / 2);
+            f.Controls.Add(next);
+
+            next.Focus();
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             //TODO: Launch MenuScreen
+
         }
     }
 }
