@@ -14,19 +14,26 @@ namespace SimonSays
 {
     public partial class GameScreen : UserControl
     {
-        //TODO: create an int guess variable to track what part of the pattern the user is at
 
+        #region global variable set up
         Random rng = new Random();
+
         public static int round = 1;
         int guess = 0;
         int timer = 5;
         int delay = 500;
-        int rSpace, bSpace, gSpace, ySpace;
+        int random;
+
         List<Color> colorList = new List<Color>();
+        List<SoundPlayer> soundList = new List<SoundPlayer>();
+        List<int> positionList = new List<int>();
+        #endregion
 
         public GameScreen()
         {
             InitializeComponent();
+
+            #region list setup
             colorList.Add(Color.ForestGreen);
             colorList.Add(Color.DarkRed);
             colorList.Add(Color.Goldenrod);
@@ -35,16 +42,27 @@ namespace SimonSays
             colorList.Add(Color.LightCoral);
             colorList.Add(Color.Yellow);
             colorList.Add(Color.SkyBlue);
+            positionList.Add(0);
+            positionList.Add(1);
+            positionList.Add(2);
+            positionList.Add(3);
+            soundList.Add(Form1.gSound);
+            soundList.Add(Form1.rSound);
+            soundList.Add(Form1.ySound);
+            soundList.Add(Form1.bSound);
+            #endregion
         }
 
         private void GameScreen_Load(object sender, EventArgs e)
         {
+            //resets game variables when screen loads 
             Refresh();
             delay = 500;
             timer = 5;
             round = 1;
             Form1.pattern.Clear();
 
+            //makes timer visable when game mode is selected  
             if (MenuScreen.timer == true)
             {
                 timerLabel.Visible = true;
@@ -59,16 +77,18 @@ namespace SimonSays
 
         private void ComputerTurn()
         {
+            //stops timer while the computer plays the patterns 
             Game_Tick.Stop();
             timer = 5;
             Thread.Sleep(500);
 
-
+            //makes sure the pattern is the right way when game mode is selected 
             if (MenuScreen.reverse == true)
             {
                 Form1.pattern.Reverse();
             }
 
+            //adds a random colour to the pattern
             Form1.pattern.Add(rng.Next(0, 4));
 
 
@@ -111,16 +131,19 @@ namespace SimonSays
             }
             #endregion
 
+            //sets guess number back to zero 
             guess = 0;
 
             gameMode();
 
+            //restarts timer
             Game_Tick.Start();
         }
 
         private void gameMode()
         {
             #region speedUp
+            //increases the speed of the pattern every 3 turns 
             if (MenuScreen.speed == true)
             {
                 if (round % 3 == 0)
@@ -128,6 +151,7 @@ namespace SimonSays
                     delay -= 75;
                 }
 
+                //limits the speed
                 if (delay <= 0)
                 {
                     delay = 10;
@@ -136,6 +160,7 @@ namespace SimonSays
             #endregion
 
             #region reverse 
+            //reverses the pattern
             if (MenuScreen.reverse == true)
             {
                 Form1.pattern.Reverse();
@@ -145,32 +170,33 @@ namespace SimonSays
             #region swap 
             if (MenuScreen.swap == true)
             {
-                rSpace = rng.Next(0, 4);
-                changeSpace(rSpace, redButton);
-                bSpace = rng.Next(0, 4);
-                while (bSpace == rSpace)
+                //picks a ramdom position and adds it to list if its not already in it
+                positionList.Clear();
+
+                for (int i = 0; i < 4; i++)
                 {
-                    bSpace = rng.Next(0, 4);
+                    random = rng.Next(0, 4);
+
+                    while (positionList.Contains(random))
+                    {
+                        random = rng.Next(0, 4);
+                    }
+
+                    positionList.Add(random);
                 }
-                changeSpace(bSpace, blueButton);
-                ySpace = rng.Next(0, 4);
-                while (ySpace == rSpace || ySpace == bSpace)
-                {
-                    ySpace = rng.Next(0, 4);
-                }
-                changeSpace(ySpace, yellowButton);
-                gSpace = rng.Next(0, 4);
-                while (gSpace == rSpace || gSpace == ySpace || gSpace == bSpace)
-                {
-                    gSpace = rng.Next(0, 4);
-                }
-                changeSpace(gSpace, greenButton);
+
+                //changes all the positions 
+                changeSpace(positionList[0], redButton);
+                changeSpace(positionList[1], blueButton);
+                changeSpace(positionList[2], greenButton);
+                changeSpace(positionList[3], yellowButton);
             }
             #endregion
         }
 
         private void changeSpace(int space, Button b)
         {
+            //moves the selected colour to the selected spot
             switch (space)
             {
                 case 0:
@@ -188,15 +214,20 @@ namespace SimonSays
             }
         }
 
-        private void playerTurn(int colour, SoundPlayer sound, Button b)
+        private void playerTurn(int colour, Button b)
         {
+            //changes the buttons colour
             b.BackColor = colorList[colour + 4];
             Refresh();
-            sound.Play();
+            //plays buttons sound
+            soundList[colour].Play();
             Thread.Sleep(200);
+            //changes the buttons colour back
             b.BackColor = colorList[colour];
             Refresh();
 
+            //if the colour pressed is the same as the one played goes to the next colour in the list
+            //if not ends game 
             if (colour == Form1.pattern[guess])
             {
                 guess++;
@@ -206,6 +237,7 @@ namespace SimonSays
                 GameOver();
             }
 
+            //if the number of guess is the same as the round number it goes to the next round 
             if (guess >= round)
             {
                 round++;
@@ -214,20 +246,21 @@ namespace SimonSays
 
         }
 
-        //TODO: create one of these event methods for each button
+
         private void greenButton_Click(object sender, EventArgs e)
         {
-            playerTurn(0, Form1.gSound, greenButton);
+            playerTurn(0, greenButton);
 
         }
 
         private void redButton_Click(object sender, EventArgs e)
         {
-            playerTurn(1, Form1.rSound, redButton);
+            playerTurn(1, redButton);
         }
 
         private void Game_Tick_Tick(object sender, EventArgs e)
         {
+            //decreases the timer every tick 
             if (MenuScreen.timer == true)
             {
                 timer--;
@@ -235,7 +268,7 @@ namespace SimonSays
                 Refresh();
             }
 
-
+            //ends game if timer reaches 0 
             if (timer == 0)
             {
                 GameOver();
@@ -245,15 +278,16 @@ namespace SimonSays
 
         private void yellowButton_Click(object sender, EventArgs e)
         {
-            playerTurn(2, Form1.ySound, yellowButton);
+            playerTurn(2, yellowButton);
         }
         private void blueButton_Click(object sender, EventArgs e)
         {
-            playerTurn(3, Form1.bSound, blueButton);
+            playerTurn(3, blueButton);
         }
 
         public void GameOver()
         {
+            // stops timer plays game over sound and switches screens 
             Game_Tick.Stop();
 
             Form1.lSound.Play();

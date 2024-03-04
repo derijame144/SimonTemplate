@@ -24,6 +24,7 @@ namespace SimonSays
 
         private void MenuScreen_Load(object sender, EventArgs e)
         {
+            //makes sure the button colours are right when screen loads 
             if (swap == true)
             {
                 swapButton.BackColor = Color.Green;
@@ -71,7 +72,7 @@ namespace SimonSays
         {
             Application.Exit();
         }
-
+        // turns on and off the differnt game modes
         private void hardButton_Click(object sender, EventArgs e)
         {
             if (swap == false)
@@ -128,6 +129,7 @@ namespace SimonSays
             }
         }
 
+        //toggles on and off all the game modes at the same time
         private void allButton_Click(object sender, EventArgs e)
         {
             if (all == false)

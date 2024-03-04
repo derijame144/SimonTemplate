@@ -19,6 +19,7 @@ namespace SimonSays
 
         private void GameOverScreen_Load(object sender, EventArgs e)
         {
+            //displays gameover message and pattern length
             patternLabel.Text = "Your pattern length was:";
             lengthLabel.Text = $"{GameScreen.round - 1}";
             Refresh();
@@ -26,7 +27,7 @@ namespace SimonSays
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-
+            //changes screens 
             Form1.ChangeScreen(this, new MenuScreen());
         }
     }

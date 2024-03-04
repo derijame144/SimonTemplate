@@ -14,8 +14,7 @@ namespace SimonSays
 {
     public partial class Form1 : Form
     {
-        //TODO: create a List to store the pattern. Must be accessable on other screens
-
+        //sets up variables 
         public static List<int> pattern = new List<int>();
         public static SoundPlayer bSound = new SoundPlayer(Properties.Resources.blue);
         public static SoundPlayer rSound = new SoundPlayer(Properties.Resources.red);
@@ -25,6 +24,7 @@ namespace SimonSays
         public Form1()
         {
             InitializeComponent();
+            //changes screens 
             ChangeScreen(this, new MenuScreen());
         }
 
